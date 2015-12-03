@@ -113,6 +113,14 @@ def findLevels(node):
         return rightHeight + 1
 
 
+def longestPath(node):
+    if node.left and node.right is not None:
+        currLen = findLevels(node.left) + findLevels(node.right) + 1
+        return max(currLen, longestPath(node.left), longestPath(node.right))
+    return -1
+
+
+
 tree = BinaryTree()
 tree.insertNode(3)
 tree.insertNode(0)
@@ -137,3 +145,4 @@ levelOrderPrint(tree)
 print("")
 print("Levels")
 print(findLevels(tree.getNode()))
+print(longestPath(tree.getNode()))

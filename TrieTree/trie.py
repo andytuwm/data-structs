@@ -7,12 +7,17 @@ class Node:
         self.value = value
         self.valueExists = False
 
+    def hasChildren(self):
+        if len(self.path) > 0: return True
+        return False
+
 
 class Trie:
     def __init__(self):
         self.node = Node()
 
     def insertWord(self, word):
+        word = word.lower()
         index = self.findNode(self.node, word[0])
         if index > -1:
             self.insertChar(self.node.path[index], word[1:])
@@ -43,6 +48,7 @@ class Trie:
         return -1;
 
     def contains(self, word, node=None, i=0):
+        word = word.lower()
         if node is None:
             node = self.node
         if i == len(word) and node.valueExists is True: return True
@@ -53,11 +59,42 @@ class Trie:
             return False
 
 
+def findDepth(node):
+    if node is None: return 0
+    maxDepth = 0
+    for i, n in enumerate(node.path):
+        depth = findDepth(n)
+        if depth > maxDepth:
+            maxDepth = depth
+    return maxDepth + 1
+
+
+def longestPath(node):
+    maxList = [0, 0]
+    list = []
+    if node.hasChildren:
+        for n in node.path:
+            d = findDepth(n)
+            if d > maxList[0]:
+                maxList[0] = d
+            elif d > maxList[1]:
+                maxList[1] = d
+            list.append(longestPath(n))
+        list.append(maxList[0] + maxList[1] + 1)
+        return max(list)
+    return -1
+
+
 trie = Trie()
 trie.insertWord("hello")
 trie.insertWord("hella")
+trie.insertWord("hellp")
+trie.insertWord("holla")
+trie.insertWord("holograms")
 trie.insertWord("apple")
 print(trie.contains("hello"))
 print(trie.contains("hella"))
 print(trie.contains("apple"))
 print(trie.contains("hello!"))
+print(findDepth(trie.node))
+print(longestPath(trie.node))
